@@ -124,6 +124,7 @@ public class GameController {
 		handleInput(aEntity.get(0));
 		
 		updateEntities();
+		camera.update(0f, 4f);
 	}
 	
 	float walkSpeed = 1f;
@@ -191,6 +192,7 @@ public class GameController {
 		for (Entity ent : aEntity) {
 			ent.vel.y += Constants.GRAVITY * Gdx.graphics.getDeltaTime();
 			ent.vel.y = MathUtils.clamp(ent.vel.y, -1f, 1f);
+			ent.grounded = false;
 			updateEntityPosition(ent);
 		}
 	}
@@ -207,35 +209,68 @@ public class GameController {
 				// left ray
 				if (Intersector.intersectSegments(px1, py1, px2, py2, 
 						ent.pos.x - ent.width/2f, 
-						ent.pos.y + ent.height/2f, 
+						ent.pos.y + ent.height/2f + Math.abs(ent.vel.y) + ent.offset, 
 						ent.pos.x - ent.width/2f,
-						ent.pos.y - ent.height/2f, 
+						ent.pos.y - ent.height/2f - Math.abs(ent.vel.y) - ent.offset, 
 						intersection)) {
 					ent.vel.y = 0;
 					ent.grounded = true;
 					if (intersection.y > ent.pos.y) {
-						ent.pos.y = intersection.y - ent.height/2f;
+						ent.pos.y = intersection.y - ent.height/2f - ent.offset;
 					} else {
-						ent.pos.y = intersection.y + ent.height/2f;
+						ent.pos.y = intersection.y + ent.height/2f + ent.offset;
 					}
 				}
 				
 				// right ray
 				if (Intersector.intersectSegments(px1, py1, px2, py2, 
 						ent.pos.x + ent.width/2f, 
-						ent.pos.y + ent.height/2f, 
+						ent.pos.y + ent.height/2f + Math.abs(ent.vel.y) + ent.offset,
 						ent.pos.x + ent.width/2f,
-						ent.pos.y - ent.height/2f, 
+						ent.pos.y - ent.height/2f - Math.abs(ent.vel.y) - ent.offset, 
 						intersection)) {
 					ent.vel.y = 0;
 					ent.grounded = true;
 					if (intersection.y > ent.pos.y) {
-						ent.pos.y = intersection.y-ent.height/2f;
+						ent.pos.y = intersection.y - ent.height/2f - ent.offset;
 					} else {
-						ent.pos.y = intersection.y+ent.height/2f;
+						ent.pos.y = intersection.y + ent.height/2f + ent.offset;
 					}
 				}
 				
+				// top ray
+				if (Intersector.intersectSegments(px1, py1, px2, py2, 
+						ent.pos.x - ent.width/2f - Math.abs(ent.vel.x) - ent.offset,
+						ent.pos.y + ent.height/2f,
+						ent.pos.x + ent.width/2f + Math.abs(ent.vel.x) + ent.offset,
+						ent.pos.y + ent.height/2f, 
+						intersection)) {
+					
+					if (intersection.x > ent.pos.x) {
+						ent.pos.x = intersection.x - ent.width/2f - ent.offset + ent.vel.x - minSpeed;
+					} else {
+						ent.pos.x = intersection.x + ent.width/2f + ent.offset - ent.vel.x + minSpeed;
+					}
+					ent.vel.x = 0;
+				}
+				
+				// bottom ray
+				if (Intersector.intersectSegments(px1, py1, px2, py2, 
+						ent.pos.x - ent.width/2f - Math.abs(ent.vel.x) - ent.offset,
+						ent.pos.y - ent.height/2f,
+						ent.pos.x + ent.width/2f + Math.abs(ent.vel.x) + ent.offset,
+						ent.pos.y - ent.height/2f, 
+						intersection)) {
+					
+					if (intersection.x > ent.pos.x) {
+						ent.pos.x = intersection.x - ent.width/2f - ent.offset + ent.vel.x - minSpeed;
+					} else {
+						ent.pos.x = intersection.x + ent.width/2f + ent.offset - ent.vel.x + minSpeed;
+					}
+					ent.vel.x = 0;
+				}
+				
+				/*
 				// bottom ray
 				if (Intersector.intersectSegments(px1, py1, px2, py2, 
 						ent.pos.x - ent.width/2f - Math.abs(ent.vel.x), 
@@ -243,7 +278,6 @@ public class GameController {
 						ent.pos.x + ent.width/2f + Math.abs(ent.vel.x),
 						ent.pos.y - ent.height/2f, 
 						intersection)) {
-
 					if (intersection.x > ent.pos.x) {
 						ent.pos.x = intersection.x - ent.width/2f + ent.vel.x - minSpeed;
 					} else {
@@ -259,7 +293,6 @@ public class GameController {
 						ent.pos.x + ent.width/2f + Math.abs(ent.vel.x),
 						ent.pos.y + ent.height/2f, 
 						intersection)) {
-
 					if (intersection.x > ent.pos.x) {
 						ent.pos.x = intersection.x - ent.width/2f + ent.vel.x - minSpeed;
 					} else {
@@ -267,6 +300,7 @@ public class GameController {
 					}
 					ent.vel.x = 0;
 				}
+				*/
 			}
 		}
 		ent.pos.x += ent.vel.x;

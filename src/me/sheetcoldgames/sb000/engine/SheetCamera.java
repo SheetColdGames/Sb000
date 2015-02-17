@@ -14,8 +14,12 @@ public class SheetCamera extends OrthographicCamera {
 	}
 	
 	public void update() {
+		update(0f, 0f);
+	}
+	
+	public void update(float offsetX, float offsetY) {
 		if (hasTarget()) {
-			position.set(target.pos.x, target.pos.y, 0f);
+			position.set(target.pos.x + offsetX, target.pos.y + offsetY, 0f);
 		}
 		super.update();
 	}
