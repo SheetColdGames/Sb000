@@ -1,12 +1,10 @@
-*.class
-
-# Mobile Tools for Java (J2ME)
-.mtj.tmp/
-
-# Package Files #
-*.jar
-*.war
-*.ear
-
-# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
-hs_err_pid*
+.metadata/
+sb000/.settings/
+sb000/bin/
+sb000/libs/gdx.jar
+sb000/libs/gdx-sources.jar
+sb000/libs/.settings/
+sb000/libs/gdx-backend-lwjgl.jar
+sb000/libs/gdx-backend-lwjgl-natives.jar
+sb000/libs/gdx-natives.jar
+RemoteSystemsTempFiles/
