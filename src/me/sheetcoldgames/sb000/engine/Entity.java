@@ -2,6 +2,7 @@ package me.sheetcoldgames.sb000.engine;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 public class Entity {
@@ -10,23 +11,45 @@ public class Entity {
 	/** the velocity vector */
 	public Vector2 vel;
 	
+	/** actual width of the entity */
 	public float width;
+	/** actual height of the entity */
 	public float height;
 	
-	public float offset;
+	public float offsetWidth;
+	public float offsetHeight;
+	
+	public float collisionWidth;
+	public float collisionHeight;
 	
 	public boolean grounded = false;
 	
 	public ArrayList<Attack> attacks;
+	
+	public DIRECTION dir;
+	public AIR_STATUS airStatus;
+	public ACTION action;
+	
+	public float stateTime = 0f;
+	
+	/** Probably shouldn't be here, needs review */
+	public TextureRegion currentFrame;
 	
 	public Entity(float w, float h, float x, float y) {
 		width = w;
 		height = h;
 		pos = new Vector2(x, y);
 		vel = new Vector2();
-		offset = .1f;
+		offsetWidth = .5f;
+		offsetHeight = .5f;
+		collisionWidth = width - offsetWidth;
+		collisionHeight = height - offsetHeight;
 		
 		attacks = new ArrayList<Attack>();
+		
+		dir = DIRECTION.RIGHT;
+		airStatus = AIR_STATUS.GROUNDED;
+		action = ACTION.IDLE;
 	}
 	
 	public Entity() {

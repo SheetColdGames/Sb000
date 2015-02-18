@@ -1,7 +1,7 @@
 TO DO
-- Consertar o teste de colisão para todos os casos
-- Adicionar ataques como sendo um conjunto de pontos colidíveis
-- Adicionar estados para as entidades (WALKING, JUMPING, ATTACKING, RIGHT, LEFT...)
+- Adicionar ataques como sendo um conjunto de pontos colidíveis (mudamos pra retângulo, mesmo)
+- Adicionar estados para as entidades (WALKING, JUMPING, ATTACKING, RIGHT, LEFT...) (DONE)
+- Consertar o posicionamento das animações do personagem
 - Criar comportamento do boss do jogo
 - Criar um editor de pontos de física
 - Criar um editor para desenhar os tilesets no mapa
