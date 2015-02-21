@@ -36,12 +36,12 @@ public class Entity {
 	public TextureRegion currentFrame;
 	
 	public Entity(float w, float h, float x, float y) {
-		width = w;
-		height = h;
+		offsetWidth = .3f;
+		offsetHeight = .3f;
+		width = w-offsetWidth;
+		height = h-offsetHeight;
 		pos = new Vector2(x, y);
 		vel = new Vector2();
-		offsetWidth = .5f;
-		offsetHeight = .5f;
 		collisionWidth = width - offsetWidth;
 		collisionHeight = height - offsetHeight;
 		

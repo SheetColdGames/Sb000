@@ -37,9 +37,9 @@ public class GameController {
 	// hero constants - this should be organized
 	public final float HERO_IDLE_DURATION 		= 5/12f;
 	public final float HERO_RUNNING_DURATION 	= 8/12f;
-	public final float HERO_TAKE_OFF_DURATION 	= 3/12f;
-	public final float HERO_JUMPING_DURATION 	= 4/12f;
-	public final float HERO_FALLING_DURATION 	= 4/12f;
+	public final float HERO_TAKE_OFF_DURATION 	= 2/12f;
+	public final float HERO_JUMPING_DURATION 	= 5/12f;
+	public final float HERO_FALLING_DURATION 	= 3/12f;
 	public final float HERO_LANDING_DURATION 	= 3/12f;
 	
 	public GameController() {
@@ -177,7 +177,7 @@ public class GameController {
 				&& player.airStatus == AIR_STATUS.GROUNDED 
 				&& player.action != ACTION.ATTACKING) {
 			player.airStatus = AIR_STATUS.TAKING_OFF;
-		} else */ if (input.buttons[Input.JUMP]) {
+		} else */ if (input.buttons[Input.JUMP] || input.buttons[Input.UP]) {
 			jump(Gdx.graphics.getDeltaTime(), player);
 		} else {
 			jump = false;
@@ -219,7 +219,7 @@ public class GameController {
 			updateEntityPosition(ent);
 			updateEntityStatuses(ent);
 		}
-		printStatusLog(aEntity.get(0));
+		System.out.println(getStatusLog(aEntity.get(0)));
 	}
 	
 	private void updateAttackStatus(Entity ent) {
@@ -236,6 +236,8 @@ public class GameController {
 	
 	private void updateEntityPosition(Entity ent) {
 		Vector2 intersection = new Vector2(0f, 0f);
+		// we need to determine whose methods are able to change statuses
+		if (ent.action == ACTION.PUSHING_WALL) { ent.action = ACTION.IDLE; }
 		for (int currentGroup = 0; currentGroup < groupPoints.size(); currentGroup++) {
 			for (int currentPoint = 0; currentPoint < groupPoints.get(currentGroup).size() - 1; currentPoint++) {
 				float px1 = groupPoints.get(currentGroup).get(currentPoint).pos.x;
@@ -293,6 +295,9 @@ public class GameController {
 						ent.pos.x = intersection.x + ent.collisionWidth/2f + ent.offsetWidth + ent.vel.x + minSpeed;
 					}
 					ent.vel.x = 0;
+					if (ent.airStatus == AIR_STATUS.GROUNDED && ent.action != ACTION.ATTACKING) {
+						ent.action = ACTION.PUSHING_WALL;
+					}
 				}
 				
 				// bottom ray
@@ -309,6 +314,10 @@ public class GameController {
 						ent.pos.x = intersection.x + ent.collisionWidth/2f + ent.offsetWidth + ent.vel.x + minSpeed;
 					}
 					ent.vel.x = 0;
+					// if he's grounded, then he's pushing a wall
+					if (ent.airStatus == AIR_STATUS.GROUNDED && ent.action != ACTION.ATTACKING) {
+						ent.action = ACTION.PUSHING_WALL;
+					}
 				}
 			}
 		}
@@ -341,9 +350,12 @@ public class GameController {
 			
 			// if the character is jumping, he's idle
 			ent.action = ACTION.IDLE;
-			
 		} else {
-			if (ent.airStatus == AIR_STATUS.FALLING) {
+			if (ent.airStatus == AIR_STATUS.TAKING_OFF || ent.airStatus == AIR_STATUS.JUMPING) {
+				ent.airStatus = AIR_STATUS.LANDING;
+				ent.action = ACTION.IDLE;
+				ent.stateTime = 0f;
+			} else if (ent.airStatus == AIR_STATUS.FALLING) {
 				ent.airStatus = AIR_STATUS.LANDING;
 				ent.action = ACTION.IDLE; // he can't attack while landing
 				ent.stateTime = 0f;
@@ -357,7 +369,9 @@ public class GameController {
 						if (ent.action != ACTION.IDLE) {
 							ent.stateTime = 0f;
 						}
-						ent.action = ACTION.IDLE;
+						if (ent.action != ACTION.PUSHING_WALL) {
+							ent.action = ACTION.IDLE;
+						}
 					} else {
 						if (ent.action != ACTION.ATTACKING) {
 							ent.stateTime = 0f;
@@ -377,11 +391,8 @@ public class GameController {
 		}
 	}
 	
-	private void printStatusLog(Entity ent) {
-		System.out.println("current entity status:");
-		System.out.println("DIRECTION: " + ent.dir);
-		System.out.println("AIR_STATUS: " + ent.airStatus);
-		System.out.println("ACTION: " + ent.action);
-		System.out.println();
+	public String getStatusLog(Entity ent) {
+		return String.format("DIRECTION: %s\nAIR_STATUS: %s\nACTION: %s\n", 
+				ent.dir.toString(), ent.airStatus.toString(), ent.action.toString());
 	}
 }

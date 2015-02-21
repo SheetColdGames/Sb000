@@ -1,7 +1,8 @@
 TO DO
 - Adicionar ataques como sendo um conjunto de pontos colidíveis (mudamos pra retângulo, mesmo)
 - Adicionar estados para as entidades (WALKING, JUMPING, ATTACKING, RIGHT, LEFT...) (DONE)
-- Consertar o posicionamento das animações do personagem
+- Consertar o posicionamento das animações do personagem (DONE)
+- Converter as mudanças de estados explícitas espalhadas em vários métodos em requisições de mudança de estado
 - Criar comportamento do boss do jogo
 - Criar um editor de pontos de física
 - Criar um editor para desenhar os tilesets no mapa

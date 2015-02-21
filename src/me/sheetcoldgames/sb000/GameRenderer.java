@@ -93,10 +93,10 @@ public class GameRenderer {
 	}
 
 	public void render() {
-		Gdx.gl.glClearColor(0f, 0f, 0f, 1f);
+		Gdx.gl.glClearColor(0f, .1f, .2f, 1f);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		renderAnimations();
 		debugRender();
+		renderAnimations();
 	}
 	
 	private void renderAnimations() {
@@ -173,6 +173,10 @@ public class GameRenderer {
 		font.draw(sb, String.valueOf(Gdx.graphics.getFramesPerSecond()), 
 				controller.hudCamera.position.x-controller.hudCamera.viewportWidth/2f+24,
 				controller.hudCamera.position.y+controller.hudCamera.viewportHeight/2f-24);
+		font.drawMultiLine(sb,
+				controller.getStatusLog(controller.aEntity.get(0)),
+				controller.hudCamera.position.x + 40f,
+				controller.hudCamera.position.y + 220f);
 		sb.end();
 	}
 	
