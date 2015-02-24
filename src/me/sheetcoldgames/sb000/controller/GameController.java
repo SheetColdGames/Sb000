@@ -38,9 +38,10 @@ public class GameController {
 	public final float HERO_IDLE_DURATION 		= 5/12f;
 	public final float HERO_RUNNING_DURATION 	= 8/12f;
 	public final float HERO_TAKE_OFF_DURATION 	= 2/12f;
-	public final float HERO_JUMPING_DURATION 	= 5/12f;
-	public final float HERO_FALLING_DURATION 	= 3/12f;
+	public final float HERO_JUMPING_DURATION 	= 4/12f;
+	public final float HERO_FALLING_DURATION 	= 6/12f;
 	public final float HERO_LANDING_DURATION 	= 3/12f;
+	public final float[] HERO_BASIC_ATTACK_DURATION = {10/12f, 10/12f};
 	
 	public GameController() {
 		initCameras();
@@ -146,7 +147,7 @@ public class GameController {
 	boolean attacking = false;;
 	
 	// initial impulse
-	float initialImpulse = .1f;
+	float initialImpulse = .04f;
 	boolean jump = false;
 	
 	private void handleInput(Entity player) {
@@ -177,7 +178,8 @@ public class GameController {
 				&& player.airStatus == AIR_STATUS.GROUNDED 
 				&& player.action != ACTION.ATTACKING) {
 			player.airStatus = AIR_STATUS.TAKING_OFF;
-		} else */ if (input.buttons[Input.JUMP] || input.buttons[Input.UP]) {
+		} else */ 
+		if ((input.buttons[Input.JUMP] || input.buttons[Input.UP]) && player.attacks.isEmpty()) {
 			jump(Gdx.graphics.getDeltaTime(), player);
 		} else {
 			jump = false;
@@ -189,12 +191,14 @@ public class GameController {
 	private void attack(Entity ent) {
 		if (!attacking) {
 			attacking = true;
-			ent.attacks.add(
-					new Attack(ent.pos.x + (ent.dir == DIRECTION.RIGHT ? 1.0f : -1.0f), ent.pos.y, 
-							1f, 1f, // width and height 
-							10f/12f, // duration 
-							1/2f) // damage TIME!
-					);
+			if (ent.attacks.size() < 2) {
+				ent.attacks.add(
+						new Attack(ent.pos.x + (ent.dir == DIRECTION.RIGHT ? 1.0f : -1.0f), ent.pos.y, 
+								1f, 1f, // width and height 
+								10f/12f, // duration 
+								1/2f) // damage TIME!
+						);
+			}
 		}
 	}
 	
@@ -223,14 +227,20 @@ public class GameController {
 	}
 	
 	private void updateAttackStatus(Entity ent) {
-		if (!ent.attacks.isEmpty()) {
+		if (!ent.attacks.isEmpty() && ent.currentAttackIndex < ent.attacks.size()) {
 			ent.vel.x = 0f;
-			for (int currAtk = 0; currAtk < ent.attacks.size(); currAtk++) {
-				ent.attacks.get(currAtk).update(Gdx.graphics.getDeltaTime());
-				if (ent.attacks.get(currAtk).isFinished()) {
-					ent.attacks.remove(currAtk);
+			ent.attacks.get(ent.currentAttackIndex).update(Gdx.graphics.getDeltaTime());
+			if (ent.attacks.get(ent.currentAttackIndex).isFinished()) {
+				ent.currentAttackIndex++;
+				// check and clear if it's empty
+				if (ent.currentAttackIndex >= ent.attacks.size()) {
+					ent.attacks.clear();
+					ent.currentAttackIndex = 0;
 				}
 			}
+		} else { // just to guarantee if it will erase
+			ent.attacks.clear();
+			ent.currentAttackIndex = 0;
 		}
 	}
 	
@@ -252,14 +262,18 @@ public class GameController {
 						ent.pos.x - ent.collisionWidth/2f,
 						ent.pos.y - ent.collisionHeight/2f - Math.abs(ent.vel.y) - ent.offsetHeight, 
 						intersection)) {
-					ent.vel.y = 0;
+					
 					
 					if (intersection.y > ent.pos.y) {
 						// remover essa constante
 						ent.pos.y = intersection.y - ent.collisionHeight/2f - ent.offsetHeight -.1f;
+						if (ent.vel.y > 0f) {
+							ent.vel.y = 0f;
+						}
 					} else {
 						ent.pos.y = intersection.y + ent.collisionHeight/2f + ent.offsetHeight;
 						ent.grounded = true;
+						ent.vel.y = 0;
 					}
 				}
 				
@@ -270,14 +284,17 @@ public class GameController {
 						ent.pos.x + ent.collisionWidth/2f,
 						ent.pos.y - ent.collisionHeight/2f - Math.abs(ent.vel.y) - ent.offsetHeight, 
 						intersection)) {
-					ent.vel.y = 0;
 					
 					if (intersection.y > ent.pos.y) {
 						// remover essa constante
 						ent.pos.y = intersection.y - ent.collisionHeight/2f - ent.offsetHeight - .1f;
+						if (ent.vel.y > 0f) {
+							ent.vel.y = 0f;
+						}
 					} else {
 						ent.pos.y = intersection.y + ent.collisionHeight/2f + ent.offsetHeight;
 						ent.grounded = true;
+						ent.vel.y = 0;
 					}
 				}
 				
@@ -325,6 +342,14 @@ public class GameController {
 		ent.pos.y += ent.vel.y;
 	}
 	
+	/** This method should be used in case we need to kill any action done by the
+	 *  Entity. It is the case with cutscenes or even when the entity is taking
+	 *  damage. Other factors may also occur */
+	private void resetEntityProperties(Entity ent) {
+		ent.attacks.clear();
+		ent.currentAttackIndex = 0;
+	}
+	
 	private void updateEntityStatuses(Entity ent) {
 		if (ent.vel.x > 0f) {
 			ent.dir = DIRECTION.RIGHT;
@@ -340,12 +365,18 @@ public class GameController {
 				} else if (ent.airStatus != AIR_STATUS.JUMPING && ent.stateTime > HERO_TAKE_OFF_DURATION) {
 					ent.stateTime = 0f;
 					ent.airStatus = AIR_STATUS.JUMPING;
+				} else if (ent.airStatus == AIR_STATUS.JUMPING && ent.stateTime > HERO_JUMPING_DURATION) {
+					// Converter  números mágicos
+					ent.stateTime = HERO_JUMPING_DURATION - 2/12f;
 				}
 			} else { // then we are falling
 				if (ent.airStatus != AIR_STATUS.FALLING) {
 					ent.airStatus = AIR_STATUS.FALLING;
 					ent.stateTime = 0f;
-				}			
+				} else if (ent.airStatus == AIR_STATUS.FALLING && ent.stateTime > HERO_FALLING_DURATION) {
+					// Converter  números mágicos
+					ent.stateTime = HERO_FALLING_DURATION - 3f/24f;
+				}
 			}
 			
 			// if the character is jumping, he's idle
@@ -366,16 +397,14 @@ public class GameController {
 			} else if (ent.airStatus == AIR_STATUS.GROUNDED) {
 				if (ent.vel.x == 0f) {
 					if (ent.attacks.isEmpty()) {
-						if (ent.action != ACTION.IDLE) {
+						if (ent.action == ACTION.PUSHING_WALL) {
+							// ent.action = ACTION.IDLE;
+						} else if (ent.action != ACTION.IDLE) {
 							ent.stateTime = 0f;
-						}
-						if (ent.action != ACTION.PUSHING_WALL) {
 							ent.action = ACTION.IDLE;
 						}
-					} else {
-						if (ent.action != ACTION.ATTACKING) {
-							ent.stateTime = 0f;
-						}
+					} else { 
+						ent.stateTime = ent.attacks.get(ent.currentAttackIndex).getStateTime();
 						ent.action = ACTION.ATTACKING;
 					}
 				} else {
@@ -392,7 +421,7 @@ public class GameController {
 	}
 	
 	public String getStatusLog(Entity ent) {
-		return String.format("DIRECTION: %s\nAIR_STATUS: %s\nACTION: %s\n", 
-				ent.dir.toString(), ent.airStatus.toString(), ent.action.toString());
+		return String.format("state time: %f \nDIRECTION: %s\nAIR_STATUS: %s\nACTION: %s\n", 
+				ent.stateTime, ent.dir.toString(), ent.airStatus.toString(), ent.action.toString());
 	}
 }

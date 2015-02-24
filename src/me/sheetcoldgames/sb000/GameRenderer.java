@@ -39,21 +39,24 @@ public class GameRenderer {
 	public static final String HERO_PREFIX = "hero_";
 	
 	public static final String IDLE 	= "idle";
-	public static final String RUN 		= "run";
-	public static final String TAKE_OFF = "take_off";
-	public static final String JUMP 	= "jump";
-	public static final String FALL 	= "fall";
-	public static final String LAND 	= "land";
-	public static final String ATTACK 	= "attack";
+	public static final String RUN 			= "run";
+	public static final String PUSH			= "push";
+	public static final String TAKE_OFF 	= "take_off";
+	public static final String JUMP 		= "jump";
+	public static final String FALL 		= "fall";
+	public static final String LAND 		= "land";
+	public static final String BASIC_ATTACK = "attack";
 	
 	// specific constants
-	public static final String HERO_IDLE 		= HERO_PREFIX + IDLE;
-	public static final String HERO_RUN			= HERO_PREFIX + RUN;
-	public static final String HERO_TAKE_OFF 	= HERO_PREFIX + TAKE_OFF;
-	public static final String HERO_JUMP 		= HERO_PREFIX + JUMP;
-	public static final String HERO_FALL 		= HERO_PREFIX + FALL;
-	public static final String HERO_LAND 		= HERO_PREFIX + LAND;
-	public static final String HERO_ATTACK 		= HERO_PREFIX + ATTACK;
+	public static final String HERO_IDLE 			= HERO_PREFIX + IDLE;
+	public static final String HERO_RUN				= HERO_PREFIX + RUN;
+	public static final String HERO_PUSH			= HERO_PREFIX + PUSH;
+	public static final String HERO_TAKE_OFF 		= HERO_PREFIX + TAKE_OFF;
+	public static final String HERO_JUMP 			= HERO_PREFIX + JUMP;
+	public static final String HERO_FALL 			= HERO_PREFIX + FALL;
+	public static final String HERO_LAND 			= HERO_PREFIX + LAND;
+	public static final String HERO_BASIC_ATTACK_0	= HERO_PREFIX + BASIC_ATTACK;
+	public static final String HERO_BASIC_ATTACK_1	= HERO_PREFIX + BASIC_ATTACK + "2";
 	
 	// ======= END OF ANIMATION CONSTANTS
 	
@@ -85,11 +88,13 @@ public class GameRenderer {
 		
 		heroAnimations.put(HERO_IDLE, new Animation(1/12f, atlas.findRegions(HERO_IDLE), PlayMode.LOOP));
 		heroAnimations.put(HERO_RUN, new Animation(1/12f, atlas.findRegions(HERO_RUN), PlayMode.LOOP));
+		heroAnimations.put(HERO_PUSH, new Animation(1/12f, atlas.findRegions(HERO_PUSH), PlayMode.LOOP));
 		heroAnimations.put(HERO_TAKE_OFF, new Animation(1/12f, atlas.findRegions(HERO_TAKE_OFF), PlayMode.NORMAL));
 		heroAnimations.put(HERO_JUMP, new Animation(1/12f, atlas.findRegions(HERO_JUMP), PlayMode.NORMAL));
 		heroAnimations.put(HERO_FALL, new Animation(1/12f, atlas.findRegions(HERO_FALL), PlayMode.NORMAL));
 		heroAnimations.put(HERO_LAND, new Animation(1/12f, atlas.findRegions(HERO_LAND), PlayMode.NORMAL));
-		heroAnimations.put(HERO_ATTACK, new Animation(1/12f, atlas.findRegions(HERO_ATTACK), PlayMode.NORMAL));
+		heroAnimations.put(HERO_BASIC_ATTACK_0, new Animation(1/12f, atlas.findRegions(HERO_BASIC_ATTACK_0), PlayMode.NORMAL));
+		heroAnimations.put(HERO_BASIC_ATTACK_1, new Animation(1/12f, atlas.findRegions(HERO_BASIC_ATTACK_1), PlayMode.NORMAL));
 	}
 
 	public void render() {
@@ -123,7 +128,13 @@ public class GameRenderer {
 			if (ent.action == ACTION.WALKING) {
 				ent.currentFrame = heroAnimations.get(HERO_RUN).getKeyFrame(ent.stateTime);
 			} else if (ent.action == ACTION.ATTACKING) {
-				ent.currentFrame = heroAnimations.get(HERO_ATTACK).getKeyFrame(ent.stateTime);
+				if (ent.currentAttackIndex == 0) {
+					ent.currentFrame = heroAnimations.get(HERO_BASIC_ATTACK_0).getKeyFrame(ent.stateTime);
+				} else if (ent.currentAttackIndex == 1) {
+					ent.currentFrame = heroAnimations.get(HERO_BASIC_ATTACK_1).getKeyFrame(ent.stateTime);
+				}
+			} else if (ent.action == ACTION.PUSHING_WALL) {
+				ent.currentFrame = heroAnimations.get(HERO_PUSH).getKeyFrame(ent.stateTime);
 			} else {
 				ent.currentFrame = heroAnimations.get(HERO_IDLE).getKeyFrame(ent.stateTime);
 			}
@@ -161,7 +172,7 @@ public class GameRenderer {
 		sr.setProjectionMatrix(controller.camera.combined);
 		sr.begin(ShapeType.Line);
 		renderCollisionPoints(controller.groupPoints);
-		entityCollisionRenderer();
+		// entityCollisionRenderer();
 		sr.end();
 		
 		sr.begin(ShapeType.Filled);

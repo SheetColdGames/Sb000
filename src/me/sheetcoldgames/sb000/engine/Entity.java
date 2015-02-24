@@ -25,6 +25,7 @@ public class Entity {
 	public boolean grounded = false;
 	
 	public ArrayList<Attack> attacks;
+	public int currentAttackIndex = 0;
 	
 	public DIRECTION dir;
 	public AIR_STATUS airStatus;
@@ -36,8 +37,8 @@ public class Entity {
 	public TextureRegion currentFrame;
 	
 	public Entity(float w, float h, float x, float y) {
-		offsetWidth = .3f;
-		offsetHeight = .3f;
+		offsetWidth = .4f;
+		offsetHeight = .4f;
 		width = w-offsetWidth;
 		height = h-offsetHeight;
 		pos = new Vector2(x, y);
