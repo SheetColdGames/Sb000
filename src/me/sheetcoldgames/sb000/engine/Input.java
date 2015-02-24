@@ -13,27 +13,29 @@ public class Input implements InputProcessor {
 	public static final int LEFT = 2;
 	public static final int RIGHT = 3;
 	
-	public static final int ACTION = 4;
-	public static final int JUMP = 5;
-	public static final int CHANGE = 6;
+	public static final int ATTACK = 4;
+	public static final int SPECIAL_ATTACK = 5;
+	public static final int BLOCK = 6;
+	public static final int JUMP = 7;
 	
-	public static final int SELECT = 7;
+	public static final int SELECT = 8;
 	
-	public static final int ENTER = 8;
+	public static final int ENTER = 9;
 	
-	public static final int CAM_UP = 9;
-	public static final int CAM_DOWN = 10;
-	public static final int CAM_LEFT = 11;
-	public static final int CAM_RIGHT = 12;
+	public static final int CAM_UP = 10;
+	public static final int CAM_DOWN = 11;
+	public static final int CAM_LEFT = 12;
+	public static final int CAM_RIGHT = 13;
 	
 	// ======= related to the editor =======
-	public static final int PREVIOUS_GROUP = 13;
-	public static final int NEXT_GROUP = 14;
-	public static final int TOGGLE_GRID = 15;
-	public static final int TOGGLE_MAP = 16;
-	public static final int SAVE_POINTS = 17;
+	public static final int PREVIOUS_GROUP = 14;
+	public static final int NEXT_GROUP = 15;
+	public static final int TOGGLE_GRID = 16;
+	public static final int TOGGLE_MAP = 17;
+	public static final int SAVE_POINTS = 18;
 	
 	// ======= miscelaneous =======
+	public static final int DEBUG_DAMAGE = 27;
 	public static final int DEBUG_RENDER = 28;
 	public static final int ESCAPE = 29;
 	public static final int CTRL = 30;
@@ -45,9 +47,10 @@ public class Input implements InputProcessor {
 	int KEY_LEFT;
 	int KEY_RIGHT;
 	
-	int KEY_ACTION;
+	int KEY_ATTACK;
+	int KEY_SPECIAL_ATTACK;
+	int KEY_BLOCK;
 	int KEY_JUMP;
-	int KEY_MAGIC;
 	
 	int KEY_SELECT;
 	
@@ -68,6 +71,7 @@ public class Input implements InputProcessor {
 	int KEY_SAVE_POINTS;
 	
 	// ======= Miscelaneous/helper keys =======
+	int KEY_DEBUG_DAMAGE;
 	int KEY_DEBUG_RENDER;
 	int KEY_ESCAPE;
 	int KEY_CTRL;
@@ -99,23 +103,24 @@ public class Input implements InputProcessor {
 	}
 	
 	private void defaultControls() {
-		KEY_UP 		= Keys.UP;
-		KEY_DOWN 	= Keys.DOWN;
-		KEY_LEFT 	= Keys.LEFT;
-		KEY_RIGHT 	= Keys.RIGHT;
+		KEY_UP 		= Keys.W;
+		KEY_DOWN 	= Keys.S;
+		KEY_LEFT 	= Keys.A;
+		KEY_RIGHT 	= Keys.D;
 		
-		KEY_ACTION 	= Keys.Z;
-		KEY_JUMP 	= Keys.SPACE;
-		KEY_MAGIC 	= Keys.X;
+		KEY_ATTACK 			= Keys.J;
+		KEY_SPECIAL_ATTACK 	= Keys.K;
+		KEY_BLOCK 			= Keys.L;
+		KEY_JUMP 			= Keys.SPACE;
 		
 		KEY_SELECT 	= Keys.C;
 		
 		KEY_ENTER 	= Keys.ENTER;
 		
-		KEY_CAM_UP 		= Keys.W;
-		KEY_CAM_DOWN 	= Keys.S;
-		KEY_CAM_LEFT 	= Keys.A;
-		KEY_CAM_RIGHT 	= Keys.D;
+		KEY_CAM_UP 		= Keys.UP;
+		KEY_CAM_DOWN 	= Keys.DOWN;
+		KEY_CAM_LEFT 	= Keys.LEFT;
+		KEY_CAM_RIGHT 	= Keys.RIGHT;
 		
 		KEY_PREVIOUS_GROUP = Keys.Q;
 		KEY_NEXT_GROUP = Keys.E;
@@ -126,6 +131,7 @@ public class Input implements InputProcessor {
 		KEY_SAVE_POINTS = Keys.B;
 		
 		KEY_DEBUG_RENDER = Keys.HOME;
+		KEY_DEBUG_DAMAGE = Keys.O;
 		
 		KEY_ESCAPE = Keys.ESCAPE;
 		KEY_CTRL = Keys.CONTROL_LEFT;
@@ -142,12 +148,14 @@ public class Input implements InputProcessor {
 			buttons[RIGHT] = true;
 		} else if (keycode == KEY_DOWN) {
 			buttons[DOWN] = true;
-		} else if (keycode == KEY_ACTION) {
-			buttons[ACTION] = true;
+		} else if (keycode == KEY_ATTACK) {
+			buttons[ATTACK] = true;
+		} else if (keycode == KEY_SPECIAL_ATTACK) {
+			buttons[SPECIAL_ATTACK] = true;
+		} else if (keycode == KEY_BLOCK) {
+			buttons[BLOCK] = true;
 		} else if (keycode == KEY_JUMP) {
 			buttons[JUMP] = true;
-		} else if (keycode == KEY_MAGIC) {
-			buttons[CHANGE] = true;
 		} else if (keycode == KEY_SELECT) {
 			buttons[SELECT] = true;
 		} else if (keycode == KEY_ENTER) {
@@ -178,6 +186,8 @@ public class Input implements InputProcessor {
 			buttons[CTRL] = true;
 		} else if (keycode == KEY_SHIFT) {
 			buttons[SHIFT] = true;
+		} else if (keycode == KEY_DEBUG_DAMAGE) {
+			buttons[DEBUG_DAMAGE] = true;
 		}
 		return true;
 	}
@@ -192,12 +202,14 @@ public class Input implements InputProcessor {
 			buttons[RIGHT] = false;
 		} else if (keycode == KEY_DOWN) {
 			buttons[DOWN] = false;
-		} else if (keycode == KEY_ACTION) {
-			buttons[ACTION] = false;
+		} else if (keycode == KEY_ATTACK) {
+			buttons[ATTACK] = false;
+		} else if (keycode == KEY_SPECIAL_ATTACK) {
+			buttons[SPECIAL_ATTACK] = true;
+		} else if (keycode == KEY_BLOCK) {
+			buttons[BLOCK] = false;
 		} else if (keycode == KEY_JUMP) {
 			buttons[JUMP] = false;
-		} else if (keycode == KEY_MAGIC) {
-			buttons[CHANGE] = false;
 		} else if (keycode == KEY_SELECT) {
 			buttons[SELECT] = false;
 		} else if (keycode == KEY_ENTER) {
@@ -228,6 +240,8 @@ public class Input implements InputProcessor {
 			buttons[CTRL] = false;
 		} else if (keycode == KEY_SHIFT) {
 			buttons[SHIFT] = false;
+		} else if (keycode == KEY_DEBUG_DAMAGE) {
+			buttons[DEBUG_DAMAGE] = false;
 		}
 		return true;
 	}

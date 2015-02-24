@@ -33,6 +33,8 @@ public class Entity {
 	
 	public float stateTime = 0f;
 	
+	public boolean takingDamage = false;
+	
 	/** Probably shouldn't be here, needs review */
 	public TextureRegion currentFrame;
 	

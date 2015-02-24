@@ -5,372 +5,617 @@ filter: Nearest,Nearest
 repeat: none
 hero_idle
   rotate: false
-  xy: 0, 187
+  xy: 0, 136
   size: 40, 24
   orig: 40, 40
   offset: 0, 0
   index: 2
 hero_idle
   rotate: false
-  xy: 0, 163
+  xy: 0, 112
   size: 40, 24
   orig: 40, 40
   offset: 0, 0
   index: 3
 hero_jump
   rotate: false
-  xy: 40, 187
+  xy: 40, 136
   size: 40, 24
   orig: 40, 40
   offset: 0, 0
   index: 0
 hero_jump
   rotate: false
-  xy: 0, 139
+  xy: 0, 88
   size: 40, 24
   orig: 40, 40
   offset: 0, 0
   index: 1
 hero_jump
   rotate: false
-  xy: 40, 163
+  xy: 40, 112
   size: 40, 24
   orig: 40, 40
   offset: 0, 0
   index: 2
 hero_jump
   rotate: false
-  xy: 80, 187
+  xy: 80, 136
   size: 40, 24
   orig: 40, 40
   offset: 0, 0
   index: 3
 hero_push
   rotate: false
-  xy: 0, 115
+  xy: 0, 64
   size: 40, 24
   orig: 40, 40
   offset: 0, 0
   index: 2
 hero_push
   rotate: false
-  xy: 40, 139
+  xy: 40, 88
   size: 40, 24
   orig: 40, 40
   offset: 0, 0
   index: 3
 hero_attack2
   rotate: false
-  xy: 80, 164
+  xy: 80, 113
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 0
 hero_attack2
   rotate: false
-  xy: 120, 188
+  xy: 120, 137
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 1
 hero_attack2
   rotate: false
-  xy: 0, 92
+  xy: 0, 41
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 8
 hero_attack2
   rotate: false
-  xy: 40, 116
+  xy: 40, 65
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 9
 hero_attack
   rotate: false
-  xy: 80, 141
+  xy: 80, 90
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 0
 hero_attack
   rotate: false
-  xy: 120, 165
+  xy: 120, 114
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 1
 hero_attack
   rotate: false
-  xy: 160, 188
+  xy: 160, 137
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 5
 hero_attack
   rotate: false
-  xy: 0, 69
+  xy: 0, 18
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 6
 hero_attack
   rotate: false
-  xy: 40, 93
+  xy: 40, 42
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 7
 hero_attack
   rotate: false
-  xy: 80, 118
+  xy: 80, 67
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 8
 hero_attack
   rotate: false
-  xy: 120, 142
+  xy: 120, 91
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 9
-hero_fall
+hero_block
   rotate: false
-  xy: 160, 165
+  xy: 160, 114
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 0
-hero_fall
+hero_damage
   rotate: false
-  xy: 200, 188
+  xy: 160, 114
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
-  index: 4
-hero_fall
-  rotate: false
-  xy: 0, 46
-  size: 40, 23
-  orig: 40, 40
-  offset: 0, 0
-  index: 5
+  index: 0
 hero_idle
   rotate: false
-  xy: 40, 70
+  xy: 160, 114
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 0
 hero_take_off
   rotate: false
-  xy: 40, 70
+  xy: 160, 114
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 0
-hero_idle
+hero_block
   rotate: false
-  xy: 80, 95
+  xy: 200, 137
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 1
+hero_damage
+  rotate: false
+  xy: 40, 19
+  size: 40, 23
+  orig: 40, 40
+  offset: 0, 1
+  index: 1
+hero_get_up
+  rotate: false
+  xy: 40, 0
+  size: 40, 19
+  orig: 40, 40
+  offset: 0, 0
+  index: 5
+hero_get_up
+  rotate: false
+  xy: 0, 1
+  size: 40, 17
+  orig: 40, 40
+  offset: 0, 0
+  index: 4
+hero_damage
+  rotate: false
+  xy: 80, 44
+  size: 40, 23
+  orig: 40, 40
+  offset: 0, 0
+  index: 2
+hero_fall
+  rotate: false
+  xy: 120, 68
+  size: 40, 23
+  orig: 40, 40
+  offset: 0, 0
+  index: 0
+hero_fall
+  rotate: false
+  xy: 160, 91
+  size: 40, 23
+  orig: 40, 40
+  offset: 0, 0
+  index: 4
+hero_fall
+  rotate: false
+  xy: 200, 114
+  size: 40, 23
+  orig: 40, 40
+  offset: 0, 0
+  index: 5
+hero_get_up
+  rotate: false
+  xy: 240, 137
+  size: 40, 23
+  orig: 40, 40
+  offset: 0, 0
+  index: 8
+hero_get_up
+  rotate: false
+  xy: 240, 137
+  size: 40, 23
+  orig: 40, 40
+  offset: 0, 0
+  index: 9
 hero_idle
   rotate: false
-  xy: 120, 119
+  xy: 80, 21
+  size: 40, 23
+  orig: 40, 40
+  offset: 0, 0
+  index: 1
+hero_death
+  rotate: false
+  xy: 80, 0
+  size: 40, 21
+  orig: 40, 40
+  offset: 0, 0
+  index: 3
+hero_idle
+  rotate: false
+  xy: 120, 45
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 4
 hero_land
   rotate: false
-  xy: 160, 142
+  xy: 160, 68
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 2
 hero_push
   rotate: false
-  xy: 200, 165
+  xy: 200, 91
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 0
 hero_push
   rotate: false
-  xy: 0, 23
+  xy: 240, 114
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 1
 hero_push
   rotate: false
-  xy: 40, 47
+  xy: 280, 137
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 4
 hero_run
   rotate: false
-  xy: 80, 72
+  xy: 120, 22
   size: 40, 23
   orig: 40, 40
   offset: 0, 1
   index: 1
+hero_attack2
+  rotate: false
+  xy: 120, 0
+  size: 40, 22
+  orig: 40, 40
+  offset: 0, 0
+  index: 2
 hero_run
   rotate: false
-  xy: 120, 96
+  xy: 160, 45
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 2
 hero_run
   rotate: false
-  xy: 160, 119
+  xy: 200, 68
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 3
 hero_run
   rotate: false
-  xy: 200, 142
+  xy: 240, 91
   size: 40, 23
   orig: 40, 40
   offset: 0, 1
   index: 5
 hero_run
   rotate: false
-  xy: 0, 0
+  xy: 280, 114
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 6
 hero_run
   rotate: false
-  xy: 40, 24
+  xy: 320, 137
   size: 40, 23
   orig: 40, 40
   offset: 0, 0
   index: 7
 hero_attack2
   rotate: false
-  xy: 80, 50
-  size: 40, 22
-  orig: 40, 40
-  offset: 0, 0
-  index: 2
-hero_attack2
-  rotate: false
-  xy: 120, 74
+  xy: 160, 23
   size: 40, 22
   orig: 40, 40
   offset: 0, 0
   index: 3
 hero_attack2
   rotate: false
-  xy: 160, 97
+  xy: 200, 46
   size: 40, 22
   orig: 40, 40
   offset: 0, 0
   index: 4
 hero_attack2
   rotate: false
-  xy: 200, 120
+  xy: 240, 69
   size: 40, 22
   orig: 40, 40
   offset: 0, 0
   index: 5
 hero_attack2
   rotate: false
-  xy: 40, 2
+  xy: 280, 92
   size: 40, 22
   orig: 40, 40
   offset: 0, 0
   index: 6
 hero_attack2
   rotate: false
-  xy: 80, 28
+  xy: 320, 115
   size: 40, 22
   orig: 40, 40
   offset: 0, 0
   index: 7
 hero_attack
   rotate: false
-  xy: 120, 52
+  xy: 360, 138
   size: 40, 22
   orig: 40, 40
   offset: 0, 0
   index: 2
 hero_attack
   rotate: false
-  xy: 160, 75
+  xy: 160, 1
   size: 40, 22
   orig: 40, 40
   offset: 0, 0
   index: 3
 hero_attack
   rotate: false
-  xy: 200, 98
+  xy: 200, 24
   size: 40, 22
   orig: 40, 40
   offset: 0, 0
   index: 4
+hero_block
+  rotate: false
+  xy: 240, 47
+  size: 40, 22
+  orig: 40, 40
+  offset: 0, 0
+  index: 10
+hero_block
+  rotate: false
+  xy: 280, 70
+  size: 40, 22
+  orig: 40, 40
+  offset: 0, 0
+  index: 11
+hero_block
+  rotate: false
+  xy: 280, 70
+  size: 40, 22
+  orig: 40, 40
+  offset: 0, 0
+  index: 12
+hero_block
+  rotate: false
+  xy: 280, 70
+  size: 40, 22
+  orig: 40, 40
+  offset: 0, 0
+  index: 13
+hero_block
+  rotate: false
+  xy: 320, 93
+  size: 40, 22
+  orig: 40, 40
+  offset: 0, 0
+  index: 2
+hero_block
+  rotate: false
+  xy: 360, 116
+  size: 40, 22
+  orig: 40, 40
+  offset: 0, 0
+  index: 3
+hero_block
+  rotate: false
+  xy: 400, 138
+  size: 40, 22
+  orig: 40, 40
+  offset: 0, 0
+  index: 4
+hero_block
+  rotate: false
+  xy: 200, 2
+  size: 40, 22
+  orig: 40, 40
+  offset: 0, 0
+  index: 5
+hero_block
+  rotate: false
+  xy: 240, 25
+  size: 40, 22
+  orig: 40, 40
+  offset: 0, 0
+  index: 6
+hero_block
+  rotate: false
+  xy: 280, 48
+  size: 40, 22
+  orig: 40, 40
+  offset: 0, 0
+  index: 7
+hero_block
+  rotate: false
+  xy: 320, 71
+  size: 40, 22
+  orig: 40, 40
+  offset: 0, 0
+  index: 8
+hero_block
+  rotate: false
+  xy: 360, 94
+  size: 40, 22
+  orig: 40, 40
+  offset: 0, 0
+  index: 9
+hero_death
+  rotate: false
+  xy: 400, 116
+  size: 40, 22
+  orig: 40, 40
+  offset: 0, 0
+  index: 0
+hero_death
+  rotate: false
+  xy: 240, 3
+  size: 40, 22
+  orig: 40, 40
+  offset: 0, 0
+  index: 1
+hero_death
+  rotate: false
+  xy: 280, 26
+  size: 40, 22
+  orig: 40, 40
+  offset: 0, 0
+  index: 2
 hero_fall
   rotate: false
-  xy: 80, 6
+  xy: 320, 49
   size: 40, 22
   orig: 40, 40
   offset: 0, 0
   index: 1
 hero_fall
   rotate: false
-  xy: 120, 30
+  xy: 360, 72
   size: 40, 22
   orig: 40, 40
   offset: 0, 0
   index: 2
 hero_fall
   rotate: false
-  xy: 160, 53
+  xy: 400, 94
   size: 40, 22
   orig: 40, 40
   offset: 0, 0
   index: 3
 hero_land
   rotate: false
-  xy: 200, 76
+  xy: 280, 4
   size: 40, 22
   orig: 40, 40
   offset: 0, 0
   index: 0
 hero_land
   rotate: false
-  xy: 120, 8
+  xy: 320, 27
   size: 40, 22
   orig: 40, 40
   offset: 0, 0
   index: 1
 hero_run
   rotate: false
-  xy: 160, 31
+  xy: 360, 50
   size: 40, 22
   orig: 40, 40
   offset: 0, 2
   index: 0
 hero_run
   rotate: false
-  xy: 200, 54
+  xy: 400, 72
   size: 40, 22
   orig: 40, 40
   offset: 0, 2
   index: 4
 hero_take_off
   rotate: false
-  xy: 160, 9
+  xy: 320, 5
   size: 40, 22
   orig: 40, 40
   offset: 0, 0
   index: 1
+hero_get_up
+  rotate: false
+  xy: 360, 29
+  size: 40, 21
+  orig: 40, 40
+  offset: 0, 0
+  index: 7
+hero_death
+  rotate: false
+  xy: 400, 52
+  size: 40, 20
+  orig: 40, 40
+  offset: 0, 0
+  index: 4
+hero_get_up
+  rotate: false
+  xy: 360, 9
+  size: 40, 20
+  orig: 40, 40
+  offset: 0, 0
+  index: 6
+hero_get_up
+  rotate: false
+  xy: 400, 36
+  size: 40, 16
+  orig: 40, 40
+  offset: 0, 0
+  index: 3
+hero_get_up
+  rotate: false
+  xy: 400, 25
+  size: 40, 11
+  orig: 40, 40
+  offset: 0, 0
+  index: 2
+hero_death
+  rotate: false
+  xy: 400, 17
+  size: 40, 8
+  orig: 40, 40
+  offset: 0, 0
+  index: 5
+hero_get_up
+  rotate: false
+  xy: 400, 9
+  size: 40, 8
+  orig: 40, 40
+  offset: 0, 0
+  index: 1
+hero_death
+  rotate: false
+  xy: 360, 2
+  size: 40, 7
+  orig: 40, 40
+  offset: 0, 0
+  index: 6
+hero_death
+  rotate: false
+  xy: 400, 2
+  size: 40, 7
+  orig: 40, 40
+  offset: 0, 0
+  index: 7
+hero_get_up
+  rotate: false
+  xy: 400, 2
+  size: 40, 7
+  orig: 40, 40
+  offset: 0, 0
+  index: 0

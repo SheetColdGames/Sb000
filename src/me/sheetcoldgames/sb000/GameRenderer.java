@@ -38,7 +38,7 @@ public class GameRenderer {
 	// general constants
 	public static final String HERO_PREFIX = "hero_";
 	
-	public static final String IDLE 	= "idle";
+	public static final String IDLE 		= "idle";
 	public static final String RUN 			= "run";
 	public static final String PUSH			= "push";
 	public static final String TAKE_OFF 	= "take_off";
@@ -46,6 +46,9 @@ public class GameRenderer {
 	public static final String FALL 		= "fall";
 	public static final String LAND 		= "land";
 	public static final String BASIC_ATTACK = "attack";
+	public static final String BLOCK		= "block";
+	public static final String DAMAGE		= "damage";
+	public static final String DEATH		= "death";
 	
 	// specific constants
 	public static final String HERO_IDLE 			= HERO_PREFIX + IDLE;
@@ -57,6 +60,9 @@ public class GameRenderer {
 	public static final String HERO_LAND 			= HERO_PREFIX + LAND;
 	public static final String HERO_BASIC_ATTACK_0	= HERO_PREFIX + BASIC_ATTACK;
 	public static final String HERO_BASIC_ATTACK_1	= HERO_PREFIX + BASIC_ATTACK + "2";
+	public static final String HERO_BLOCK			= HERO_PREFIX + BLOCK;
+	public static final String HERO_DAMAGE			= HERO_PREFIX + DAMAGE;
+	public static final String HERO_DEATH			= HERO_PREFIX + DEATH;
 	
 	// ======= END OF ANIMATION CONSTANTS
 	
@@ -80,6 +86,7 @@ public class GameRenderer {
 		sr.dispose();
 		sb.dispose();
 		font.dispose();
+		assets.dispose();
 	}
 	
 	private void initHeroAnimations() {
@@ -95,6 +102,9 @@ public class GameRenderer {
 		heroAnimations.put(HERO_LAND, new Animation(1/12f, atlas.findRegions(HERO_LAND), PlayMode.NORMAL));
 		heroAnimations.put(HERO_BASIC_ATTACK_0, new Animation(1/12f, atlas.findRegions(HERO_BASIC_ATTACK_0), PlayMode.NORMAL));
 		heroAnimations.put(HERO_BASIC_ATTACK_1, new Animation(1/12f, atlas.findRegions(HERO_BASIC_ATTACK_1), PlayMode.NORMAL));
+		heroAnimations.put(HERO_BLOCK, new Animation(1/12f, atlas.findRegions(HERO_BLOCK), PlayMode.NORMAL));
+		heroAnimations.put(HERO_DAMAGE, new Animation(1/12f, atlas.findRegions(HERO_DAMAGE), PlayMode.NORMAL));
+		heroAnimations.put(HERO_DEATH, new Animation(1/12f, atlas.findRegions(HERO_DEATH), PlayMode.NORMAL));
 	}
 
 	public void render() {
@@ -116,7 +126,9 @@ public class GameRenderer {
 	
 	
 	private void animate(Entity ent) {
-		if (ent.airStatus == AIR_STATUS.TAKING_OFF) {
+		if (ent.action == ACTION.TAKING_DAMAGE) {
+			ent.currentFrame = heroAnimations.get(HERO_DAMAGE).getKeyFrame(ent.stateTime);
+		} else if (ent.airStatus == AIR_STATUS.TAKING_OFF) {
 			ent.currentFrame = heroAnimations.get(HERO_TAKE_OFF).getKeyFrame(ent.stateTime);
 		} else if (ent.airStatus == AIR_STATUS.JUMPING) {
 			ent.currentFrame = heroAnimations.get(HERO_JUMP).getKeyFrame(ent.stateTime);
@@ -124,7 +136,7 @@ public class GameRenderer {
 			ent.currentFrame = heroAnimations.get(HERO_FALL).getKeyFrame(ent.stateTime);
 		} else if (ent.airStatus == AIR_STATUS.LANDING) {
 			ent.currentFrame = heroAnimations.get(HERO_LAND).getKeyFrame(ent.stateTime);
-		} else {
+		} else { // the character is grounded
 			if (ent.action == ACTION.WALKING) {
 				ent.currentFrame = heroAnimations.get(HERO_RUN).getKeyFrame(ent.stateTime);
 			} else if (ent.action == ACTION.ATTACKING) {
@@ -135,6 +147,8 @@ public class GameRenderer {
 				}
 			} else if (ent.action == ACTION.PUSHING_WALL) {
 				ent.currentFrame = heroAnimations.get(HERO_PUSH).getKeyFrame(ent.stateTime);
+			} else if (ent.action == ACTION.BLOCKING) {
+				ent.currentFrame = heroAnimations.get(HERO_BLOCK).getKeyFrame(ent.stateTime);
 			} else {
 				ent.currentFrame = heroAnimations.get(HERO_IDLE).getKeyFrame(ent.stateTime);
 			}
@@ -172,7 +186,9 @@ public class GameRenderer {
 		sr.setProjectionMatrix(controller.camera.combined);
 		sr.begin(ShapeType.Line);
 		renderCollisionPoints(controller.groupPoints);
-		// entityCollisionRenderer();
+		entityCollisionRenderer();
+		
+		drawAiPath();
 		sr.end();
 		
 		sr.begin(ShapeType.Filled);
@@ -267,10 +283,21 @@ public class GameRenderer {
 	
 	private void renderAttacks(Entity ent) {
 		if (!ent.attacks.isEmpty()) {
-			for (Attack atk : ent.attacks) {
-				sr.setColor(atk.isDamaging() ? Colors.ATTACK_DAMAGE : Colors.ATTACK);
-				sr.rect(atk.pos.x - atk.width/2f, atk.pos.y - atk.height/2f, atk.width, atk.height);
-			}
+			sr.setColor(ent.attacks.get(ent.currentAttackIndex).isDamaging() ? Colors.ATTACK_DAMAGE : Colors.ATTACK);
+			sr.rect(ent.attacks.get(ent.currentAttackIndex).pos.x - ent.attacks.get(ent.currentAttackIndex).width/2f,
+					ent.attacks.get(ent.currentAttackIndex).pos.y - ent.attacks.get(ent.currentAttackIndex).height/2f,
+					ent.attacks.get(ent.currentAttackIndex).width, ent.attacks.get(ent.currentAttackIndex).height);
+			
+		}
+	}
+	
+	private void drawAiPath() {
+		// let's draw the hotspots which the player will follow as soon as he's triggered to do so
+		for (int k = 0; k < controller.archerController.hotspots.length; k++) {
+			sr.setColor(k == controller.archerController.getCurrentHotspot() ? Colors.DOOR_POINT : Colors.SOLID_POINT);
+			sr.circle(controller.archerController.hotspots[k].x, 
+					controller.archerController.hotspots[k].y, 
+					controller.archerController.hotspots[k].radius, 32);
 		}
 	}
 }

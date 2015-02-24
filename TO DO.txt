@@ -4,7 +4,11 @@ TO DO
 - Consertar o posicionamento das animações do personagem (DONE)
 - Converter as mudanças de estados explícitas espalhadas em vários métodos em requisições de mudança de estado
 - Criar comportamento do boss do jogo
+// esses (muito, mas muito, mesmo) provavelmente não serão feitos
 - Criar um editor de pontos de física
 - Criar um editor para desenhar os tilesets no mapa
 - Criar editor de cutscene
 - Integrar o editor com o jogo em tempo real (da mesma forma que é feito com o renderizador de debug)
+
+// mudanças futuras importantes
+- criar editor de animação com exportador para evitar editar as animações no código

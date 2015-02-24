@@ -34,6 +34,11 @@ public class GameController {
 	
 	Input input;
 	
+	public ArcherController archerController;
+	
+	public int heroIndex = 0;
+	public int bossIndex = 1; 
+	
 	// hero constants - this should be organized
 	public final float HERO_IDLE_DURATION 		= 5/12f;
 	public final float HERO_RUNNING_DURATION 	= 8/12f;
@@ -42,6 +47,9 @@ public class GameController {
 	public final float HERO_FALLING_DURATION 	= 6/12f;
 	public final float HERO_LANDING_DURATION 	= 3/12f;
 	public final float[] HERO_BASIC_ATTACK_DURATION = {10/12f, 10/12f};
+	public final float HERO_BLOCK_DURATION 		= 14f/12f;
+	public final float HERO_DAMAGE_DURATION 	= 3f/12f;
+	public final float HERO_DYING_DURATION 		= 8f/12f;
 	
 	public GameController() {
 		initCameras();
@@ -53,6 +61,8 @@ public class GameController {
 		
 		input = new Input();
 		Gdx.input.setInputProcessor(input);
+		
+		archerController = new ArcherController();
 	}
 	
 	private void initializeTestMap(String filename) {
@@ -89,11 +99,11 @@ public class GameController {
 		aEntity = new ArrayList<Entity>();
 		
 		aEntity.add(new Entity(1.5f, 1.5f));
-		aEntity.get(0).pos.set(5f, 8f);
+		aEntity.get(heroIndex).pos.set(5f, 8f);
 		
 		// another entity, the BOSS
-		aEntity.add(new Entity(1f, 2f));
-		aEntity.get(1).pos.set(9f, 9f);
+		aEntity.add(new Entity(20/16f, 22/16f));
+		aEntity.get(bossIndex).pos.set(9f, 9f);
 	}
 	
 	public void dispose() {
@@ -129,13 +139,23 @@ public class GameController {
 		// initializing the main game camera
 		camera = new SheetCamera(Constants.VIEWPORT_WIDTH, Constants.VIEWPORT_HEIGHT);
 		camera.position.set(camera.viewportWidth/2f, camera.viewportHeight/2f, 0f);
+		camera.setBounds(camera.viewportWidth/2f - 1, camera.viewportHeight/2f - 1, // this one is almost mandatory
+				1 + camera.viewportWidth/2f, 1 + camera.viewportHeight/2f); // add constants to these variables
 		camera.update();
+		
 	}
 	
+	/**
+	 * Here's where all the magic happens
+	 */
 	public void update() {
-		aEntity.get(0).stateTime += Gdx.graphics.getDeltaTime();
-		handleInput(aEntity.get(0));
+		aEntity.get(heroIndex).stateTime += Gdx.graphics.getDeltaTime();
+
+		// getting input response
+		handleInput(aEntity.get(heroIndex));
+		archerController.updateAI(aEntity.get(bossIndex), aEntity.get(heroIndex));
 		
+		// updating
 		updateEntities();
 		camera.update(0f, 4f);
 	}
@@ -144,25 +164,40 @@ public class GameController {
 	float maxHorizontalSpeed = .12f;
 	float minSpeed = .12f;
 	
-	boolean attacking = false;;
+	boolean attacking = false;
+	boolean blocking = false;
 	
 	// initial impulse
 	float initialImpulse = .04f;
 	boolean jump = false;
 	
 	private void handleInput(Entity player) {
-		if (input.buttons[Input.RIGHT]) {
-			if (player.vel.x == 0f) player.vel.x = minSpeed;
-			player.vel.x += Gdx.graphics.getDeltaTime() * walkSpeed;
-		} else if (input.buttons[Input.LEFT]) {
-			if (player.vel.x == 0f) player.vel.x = -minSpeed;
-			player.vel.x -= Gdx.graphics.getDeltaTime() * walkSpeed;
+		if (player.action != ACTION.TAKING_DAMAGE) {
+			if (input.buttons[Input.RIGHT]) {
+				if (player.vel.x == 0f) player.vel.x = minSpeed;
+				player.vel.x += Gdx.graphics.getDeltaTime() * walkSpeed;
+			} else if (input.buttons[Input.LEFT]) {
+				if (player.vel.x == 0f) player.vel.x = -minSpeed;
+				player.vel.x -= Gdx.graphics.getDeltaTime() * walkSpeed;
+			} else {
+				player.vel.x = 0f; // MathUtils.lerp(player.vel.x, 0f, .1f);
+			}
 		} else {
-			player.vel.x = 0f; // MathUtils.lerp(player.vel.x, 0f, .1f);
+			if (player.dir == DIRECTION.RIGHT) {
+				player.vel.x -= Gdx.graphics.getDeltaTime() * walkSpeed/4f; 
+			} else {
+				player.vel.x += Gdx.graphics.getDeltaTime() * walkSpeed/4f;
+			}
 		}
 		
-		if (input.buttons[Input.ACTION] && player.airStatus == AIR_STATUS.GROUNDED) {
-			attack(player);
+		// if you're walking or idle, you can attack or block
+		if (player.airStatus == AIR_STATUS.GROUNDED && (player.action == ACTION.IDLE || 
+				player.action == ACTION.WALKING || player.action == ACTION.ATTACKING)) {
+			if (input.buttons[Input.ATTACK]) {
+				attack(player);
+			} else {
+				attacking = false;
+			}
 		} else {
 			attacking = false;
 		}
@@ -183,6 +218,11 @@ public class GameController {
 			jump(Gdx.graphics.getDeltaTime(), player);
 		} else {
 			jump = false;
+		}
+		
+		if (input.buttons[Input.DEBUG_DAMAGE] && !player.takingDamage) {
+			resetEntityProperties(player);
+			player.takingDamage = true;
 		}
 		
 		player.vel.x = MathUtils.clamp(player.vel.x, -maxHorizontalSpeed, maxHorizontalSpeed); 
@@ -223,7 +263,7 @@ public class GameController {
 			updateEntityPosition(ent);
 			updateEntityStatuses(ent);
 		}
-		System.out.println(getStatusLog(aEntity.get(0)));
+		System.out.println(getStatusLog(aEntity.get(heroIndex)));
 	}
 	
 	private void updateAttackStatus(Entity ent) {
@@ -312,7 +352,7 @@ public class GameController {
 						ent.pos.x = intersection.x + ent.collisionWidth/2f + ent.offsetWidth + ent.vel.x + minSpeed;
 					}
 					ent.vel.x = 0;
-					if (ent.airStatus == AIR_STATUS.GROUNDED && ent.action != ACTION.ATTACKING) {
+					if (ent.airStatus == AIR_STATUS.GROUNDED && ent.action != ACTION.ATTACKING && ent.action != ACTION.TAKING_DAMAGE) {
 						ent.action = ACTION.PUSHING_WALL;
 					}
 				}
@@ -332,7 +372,7 @@ public class GameController {
 					}
 					ent.vel.x = 0;
 					// if he's grounded, then he's pushing a wall
-					if (ent.airStatus == AIR_STATUS.GROUNDED && ent.action != ACTION.ATTACKING) {
+					if (ent.airStatus == AIR_STATUS.GROUNDED && ent.action != ACTION.ATTACKING && ent.action != ACTION.TAKING_DAMAGE) {
 						ent.action = ACTION.PUSHING_WALL;
 					}
 				}
@@ -348,16 +388,32 @@ public class GameController {
 	private void resetEntityProperties(Entity ent) {
 		ent.attacks.clear();
 		ent.currentAttackIndex = 0;
+		ent.vel.x = 0;
 	}
 	
 	private void updateEntityStatuses(Entity ent) {
-		if (ent.vel.x > 0f) {
-			ent.dir = DIRECTION.RIGHT;
-		} else if (ent.vel.x < 0f) {
-			ent.dir = DIRECTION.LEFT;
+		if (ent.action != ACTION.TAKING_DAMAGE) {
+			if (ent.vel.x > 0f) {
+				ent.dir = DIRECTION.RIGHT;
+			} else if (ent.vel.x < 0f) {
+				ent.dir = DIRECTION.LEFT;
+			}
+		} else {
+			if (ent.vel.x > 0f) {
+				ent.dir = DIRECTION.LEFT;
+			} else if (ent.vel.x < 0f) {
+				ent.dir = DIRECTION.RIGHT;
+			}
 		}
 		
-		if (ent.vel.y != 0f) {
+		if (ent.takingDamage) { // takingDamage is like god
+			if (ent.action != ACTION.TAKING_DAMAGE) {
+				ent.stateTime = 0f;
+				ent.action = ACTION.TAKING_DAMAGE;
+			} else if (ent.stateTime > HERO_DAMAGE_DURATION) {
+				ent.takingDamage = false;
+			}
+		} else if (ent.vel.y != 0f) {
 			if (ent.vel.y > 0) { // we are probably jumping
 				if (ent.airStatus == AIR_STATUS.GROUNDED) {
 					ent.stateTime = 0f;
