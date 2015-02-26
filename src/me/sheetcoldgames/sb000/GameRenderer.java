@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import me.sheetcoldgames.sb000.controller.GameController;
 import me.sheetcoldgames.sb000.engine.ACTION;
 import me.sheetcoldgames.sb000.engine.AIR_STATUS;
-import me.sheetcoldgames.sb000.engine.Attack;
 import me.sheetcoldgames.sb000.engine.Colors;
 import me.sheetcoldgames.sb000.engine.DIRECTION;
 import me.sheetcoldgames.sb000.engine.Entity;
@@ -15,6 +14,7 @@ import me.sheetcoldgames.sb000.engine.POINT_TYPE;
 import me.sheetcoldgames.sb000.engine.SheetPoint;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Animation.PlayMode;
@@ -23,6 +23,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.MathUtils;
 
 public class GameRenderer {
 
@@ -33,6 +34,9 @@ public class GameRenderer {
 	
 	public static Assets assets;
 	HashMap<String, Animation> heroAnimations;
+	
+	// debug stuff
+	float[] lerpHitPoints;
 	
 	// BEGIN OF ANIMATION CONSTANTS =======
 	// general constants
@@ -80,6 +84,8 @@ public class GameRenderer {
 		font.setScale(1f);
 		
 		initHeroAnimations();
+		
+		lerpHitPoints = new float[controller.aEntity.size()];
 	}
 
 	public void dispose() {
@@ -191,8 +197,11 @@ public class GameRenderer {
 		drawAiPath();
 		sr.end();
 		
+		// change this in case we want to render stuff with the main camera
+		sr.setProjectionMatrix(controller.hudCamera.combined);
 		sr.begin(ShapeType.Filled);
 		// renderEntities();
+		renderHitPoints();
 		sr.end();
 		
 		sb.setProjectionMatrix(controller.hudCamera.combined);
@@ -226,6 +235,20 @@ public class GameRenderer {
 			sr.circle(aGroup.get(groupIndex).getLast().pos.x,
 					aGroup.get(groupIndex).getLast().pos.y,
 					.25f, 16);
+		}
+	}
+	
+	Color hitPointsBarColor = new Color(0f, 1f, .2f, 1f);
+	
+	private void renderHitPoints() {
+		int i = 0;
+		for (Entity ent : controller.aEntity) {
+			lerpHitPoints[i] = MathUtils.lerp(lerpHitPoints[i], ent.hitPoints, .1f);
+			// hitPointsBarColor.set(0f, lerpHitPoints[i]/ent.maximumHitPoints, 0f, 1f);
+			hitPointsBarColor.set(MathUtils.random(), MathUtils.random(), MathUtils.random(), 1f);
+			sr.setColor(hitPointsBarColor);
+			sr.rect(32, 420f-i*24f, lerpHitPoints[i], 16f);
+			i++;
 		}
 	}
 	

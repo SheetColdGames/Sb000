@@ -36,6 +36,8 @@ public class Attack {
 	public void update(float dt) {
 		stateTime += dt;
 		finished = stateTime > duration;
+		pos.x += vel.x;
+		pos.y += vel.y;
 	}
 	
 	public float getStateTime() {

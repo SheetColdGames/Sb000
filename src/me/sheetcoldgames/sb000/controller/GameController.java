@@ -142,14 +142,16 @@ public class GameController {
 		camera.setBounds(camera.viewportWidth/2f - 1, camera.viewportHeight/2f - 1, // this one is almost mandatory
 				1 + camera.viewportWidth/2f, 1 + camera.viewportHeight/2f); // add constants to these variables
 		camera.update();
-		
 	}
 	
 	/**
 	 * Here's where all the magic happens
 	 */
 	public void update() {
-		aEntity.get(heroIndex).stateTime += Gdx.graphics.getDeltaTime();
+		// updating the state time
+		for (Entity ent : aEntity) {
+			ent.stateTime += Gdx.graphics.getDeltaTime();
+		}
 
 		// getting input response
 		handleInput(aEntity.get(heroIndex));
@@ -157,7 +159,7 @@ public class GameController {
 		
 		// updating
 		updateEntities();
-		camera.update(0f, 4f);
+		camera.update(0f, 0f);
 	}
 	
 	float walkSpeed = 1f;
@@ -255,21 +257,49 @@ public class GameController {
 	}
 	
 	private void updateEntities() {
+		int index = 0;
 		for (Entity ent : aEntity) {
 			ent.vel.y += Constants.GRAVITY * Gdx.graphics.getDeltaTime();
 			ent.vel.y = MathUtils.clamp(ent.vel.y, -1f, 1f);
 			ent.grounded = false;
-			updateAttackStatus(ent);
+			updateAttackStatus(ent, index);
 			updateEntityPosition(ent);
 			updateEntityStatuses(ent);
+			index++;
 		}
-		System.out.println(getStatusLog(aEntity.get(heroIndex)));
+		System.out.println(getStatusLog(aEntity.get(bossIndex)));
 	}
 	
-	private void updateAttackStatus(Entity ent) {
+	private void updateAttackStatus(Entity ent, int entIndex) {
 		if (!ent.attacks.isEmpty() && ent.currentAttackIndex < ent.attacks.size()) {
 			ent.vel.x = 0f;
 			ent.attacks.get(ent.currentAttackIndex).update(Gdx.graphics.getDeltaTime());
+			if (ent.attacks.get(ent.currentAttackIndex).isDamaging()) {
+				for (int k = 0; k < aEntity.size(); k++) {
+					// we don't want to attack ourselves
+					if (k == entIndex) {
+						continue;
+					}
+					// This is ugly as fuck, fix the looks, see the method signature to understand
+					if (collidesWithEnemy(
+							ent.attacks.get(ent.currentAttackIndex).pos.x - ent.attacks.get(ent.currentAttackIndex).width/2f,
+							ent.attacks.get(ent.currentAttackIndex).pos.y - ent.attacks.get(ent.currentAttackIndex).height/2f,
+							ent.attacks.get(ent.currentAttackIndex).width, ent.attacks.get(ent.currentAttackIndex).height,
+							aEntity.get(k).pos.x - aEntity.get(k).width/2f, aEntity.get(k).pos.y - aEntity.get(k).height/2f,
+							aEntity.get(k).width, aEntity.get(k).height)) {
+						System.out.println("SAHUAISDHUAIFHUIEOWHFEUIFHUIEVWHUEWYTGUHGRUIGBHRUEIGHRUWVH");
+						if (aEntity.get(k).action != ACTION.TAKING_DAMAGE) {
+							// we'll leave a hit on him
+							aEntity.get(k).hitPoints -= 10f;
+						}
+						if (aEntity.get(k).action != ACTION.ATTACKING) {
+							// aEntity.get(k).hitPoints -= 1f;
+							resetEntityProperties(aEntity.get(k));
+							aEntity.get(k).takingDamage = true;
+						}
+					}
+				}
+			}
 			if (ent.attacks.get(ent.currentAttackIndex).isFinished()) {
 				ent.currentAttackIndex++;
 				// check and clear if it's empty
@@ -282,6 +312,15 @@ public class GameController {
 			ent.attacks.clear();
 			ent.currentAttackIndex = 0;
 		}
+	}
+	
+	private boolean collidesWithEnemy(
+			float attX, float attY, float attWidth, float attHeight,
+			float enemyX, float enemyY, float enemyWidth, float enemyHeight) {
+		return (attX < enemyX + enemyWidth &&
+	        attX + attWidth > enemyX &&
+	        attY < enemyY + enemyHeight &&
+	        attHeight + attY > enemyY);
 	}
 	
 	private void updateEntityPosition(Entity ent) {
@@ -477,7 +516,7 @@ public class GameController {
 	}
 	
 	public String getStatusLog(Entity ent) {
-		return String.format("state time: %f \nDIRECTION: %s\nAIR_STATUS: %s\nACTION: %s\n", 
-				ent.stateTime, ent.dir.toString(), ent.airStatus.toString(), ent.action.toString());
+		return String.format("stateTime: %f\nhitPoints: %f\nDIRECTION: %s\nAIR_STATUS: %s\nACTION: %s\n", 
+				ent.stateTime, ent.hitPoints, ent.dir.toString(), ent.airStatus.toString(), ent.action.toString());
 	}
 }

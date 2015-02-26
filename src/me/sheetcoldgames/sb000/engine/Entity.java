@@ -35,6 +35,9 @@ public class Entity {
 	
 	public boolean takingDamage = false;
 	
+	public float hitPoints;
+	public float maximumHitPoints;
+	
 	/** Probably shouldn't be here, needs review */
 	public TextureRegion currentFrame;
 	
@@ -53,6 +56,9 @@ public class Entity {
 		dir = DIRECTION.RIGHT;
 		airStatus = AIR_STATUS.GROUNDED;
 		action = ACTION.IDLE;
+		
+		maximumHitPoints = 120f;
+		hitPoints = maximumHitPoints;
 	}
 	
 	public Entity() {
